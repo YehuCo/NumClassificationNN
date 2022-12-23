@@ -1,0 +1,47 @@
+Z: unactivated layers
+A: activated layers
+w: weights
+b: biases
+
+initialize values for weights and biases by creating:
+w1: matrix of dimensions 10x784
+b1: matrix of dimensions 10x1
+w2: matrix of dimensions 10x10
+b2: matrix of dimensions 10x1
+
+
+steps to train model: 
+1. forward propagation: run an image through the network, and compute what the output will be. 
+	a. A^[0] is the input layer. A^[0] = X (input matrix) (dimensions: 784xM).
+
+	b. Z^[1] is unactivated first layer, and calculated by applying weight and bias on A^[1]. 	
+	    Z^[1] (dimensions: 10xM) = w^[1] (dimensions: 10x784) (dot) A^[1] (dimensions: 784xM) + b^[1] (dimensions: 10x1).
+
+	c. apply activation function; applied to each value in Z^[1] to get second layer: 
+	    A^[1] = g(Z^[1]) = ReLu(Z^[1]). <-- ReLu(x) = x if x>0, 0 if x<=0
+
+	d. get unactivated second layer: 
+	    Z^[2] (dimensions: 10xM) = w^[2] (dimensions: 10x10) (dot) A^[1] (dimensions: 10xM) + b^[2] (dimensions: 10x1).
+	
+	e. apply second activation function:
+ 	    A^[2] = softmax(Z^[2]). <-- softmax = ((e^z)i)/(sum-from-j=1-to-K(e^z)j)) (e^that node / sum from 0 to the number of nodes, of e^that node)
+
+2. back propagation: see how much prediction deviated from actual label (gives an error), then see how much each weight and bias contributed to that error
+
+	a. second layer:
+	    dZ^[2] represents margin of error of second layer. dZ^[2] = A^[2] (dimensions: 10xM) - Y (dimensions: 10xM). <-- Y is output array, so if for example Y=4, encode [0,0,0,0,1,...0]
+	    dw^[2] represents derivative of loss function with respect to weights in layer 2. dw^[2] (dimensions: 10x10) = (1/m)(dZ^[2] (dot) A^[1]T)
+	    db^[2] is an average of the absolute error; how much output was off by. db^[2] (dimensions: 10x10) = (1/m)sum(dZ^[2]) (dimensions: 10x1)
+
+	b. first layer:
+	    dZ^[1] (dimensions: 10xM) = w^[2]T (dimensions: 10x10) (dot) dZ^[2] (dimensions: 10xM) * ReLu'(Z^[1]) (dimensions: 10xM)
+	    dw^[1] (dimensions: 10x784) = (1/m)(dZ^[1] (dimensions: 1xM) (dot) A^[0]T (dimensions: Mx784)
+	    db^[1](dimensions: 10x1) = (1/m)sum(dZ^[1]) (dimensions: 10x1)
+ 
+
+3. adjust weights and biases
+	w^[1] -= (alpha)(dw^1), 
+	b^[1] -= (alpha)(db^[1]), 
+	w^[2] -= (alpha)(dw^[2]), 
+	b^[2] -= (alpha)(db^[2]), 
+	where (alpha) is the learing rate of the model set manually.
